@@ -2,18 +2,13 @@ name: Update LifeInfo Data
 
 on:
   schedule:
-    # 매일 한국시간 07:00 (UTC 22:00 전날), 19:00 (UTC 10:00) — 하루 2회
     - cron: '0 22 * * *'
     - cron: '0 10 * * *'
-  workflow_dispatch:  # 수동 실행 가능
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +21,7 @@ jobs:
       - name: Run update script
         env:
           DATA_API_KEY: ${{ secrets.DATA_API_KEY }}
+          BIZ_API_KEY: ${{ secrets.BIZ_API_KEY }}
         run: python scripts/update.py
 
       - name: Commit and push changes
@@ -33,11 +29,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          CHANGES=$(git diff --cached --name-only)
-          if [ -n "$CHANGES" ]; then
-            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-            git commit -m "📊 데이터 갱신: $TIMESTAMP"
-            git push
-          else
-            echo "변경사항 없음 — 커밋 스킵"
-          fi
+          git diff --cached --quiet || git commit -m "Auto update: $(date -u '+%Y-%m-%d %H:%M') UTC"
+          git push
