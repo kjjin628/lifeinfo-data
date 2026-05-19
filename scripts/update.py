@@ -14,7 +14,7 @@ import urllib.parse
 import datetime
 
 # ─── 환경변수에서 API 키 읽기 ───
-API_KEY = os.environ.get("DATA_API_KEY", "")
+API_KEY = os.environ.get("DATA_API_KEY", "").strip()
 if not API_KEY:
     print("ERROR: DATA_API_KEY 환경변수가 설정되지 않았습니다.")
     sys.exit(1)
