@@ -19,6 +19,12 @@ if not API_KEY:
     print("ERROR: DATA_API_KEY 환경변수가 설정되지 않았습니다.")
     sys.exit(1)
 
+# gov24 (odcloud)는 Decoding 키 그대로 사용
+API_KEY_GOV = API_KEY
+
+# TourAPI (apis.data.go.kr)는 URL 인코딩해서 사용
+API_KEY_TOUR = urllib.parse.quote(API_KEY, safe="")
+
 # URL 파라미터에 넣을 때는 Decoding 키를 인코딩해서 사용
 API_KEY_ENCODED = API_KEY
 
