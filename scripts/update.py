@@ -20,7 +20,7 @@ if not API_KEY:
     sys.exit(1)
 
 # URL 파라미터에 넣을 때는 Decoding 키를 인코딩해서 사용
-API_KEY_ENCODED = urllib.parse.quote(API_KEY, safe="")
+API_KEY_ENCODED = API_KEY
 
 # ─── 한국 시간 기준 ───
 KST = datetime.timezone(datetime.timedelta(hours=9))
