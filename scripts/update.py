@@ -75,7 +75,7 @@ def get_subsidies():
         url = (
             f"https://api.odcloud.kr/api/gov24/v3/serviceList"
             f"?page={page}&perPage=20"
-            f"&serviceKey={API_KEY_ENCODED}"
+            f"&serviceKey={API_KEY_GOV}"
         )
         data = fetch_json(url)
         if not data or "data" not in data:
@@ -117,7 +117,7 @@ def get_festivals(event_start_date, num_of_rows=30):
         f"?MobileOS=ETC&MobileApp=LifeInfo&_type=json"
         f"&numOfRows={num_of_rows}&pageNo=1"
         f"&eventStartDate={event_start_date}"
-        f"&serviceKey={API_KEY_ENCODED}"
+        f"&serviceKey={API_KEY_TOUR}"
     )
     data = fetch_json(url)
     if not data:
