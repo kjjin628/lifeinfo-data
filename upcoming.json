@@ -10,7 +10,8 @@
     "contentid": "1307813",
     "areacode": "",
     "mapx": "127.13060065465167",
-    "mapy": "37.55906143476573"
+    "mapy": "37.55906143476573",
+    "region": "서울"
   },
   {
     "title": "강릉 국가유산 야행",
@@ -23,7 +24,8 @@
     "contentid": "2541883",
     "areacode": "",
     "mapx": "128.892094048853",
-    "mapy": "37.7532215015504"
+    "mapy": "37.7532215015504",
+    "region": "강원"
   },
   {
     "title": "강릉단오제",
@@ -36,7 +38,8 @@
     "contentid": "531391",
     "areacode": "",
     "mapx": "128.894988372449",
-    "mapy": "37.748158284285"
+    "mapy": "37.748158284285",
+    "region": "강원"
   },
   {
     "title": "강릉해양레저 펫가족 힐링페스티벌",
@@ -49,7 +52,8 @@
     "contentid": "3493120",
     "areacode": "",
     "mapx": "128.947338719945",
-    "mapy": "37.7726047009298"
+    "mapy": "37.7726047009298",
+    "region": "강원"
   },
   {
     "title": "경기미 김밥페스타",
@@ -62,7 +66,8 @@
     "contentid": "3486730",
     "areacode": "",
     "mapx": "127.05944694152052",
-    "mapy": "37.28582866409523"
+    "mapy": "37.28582866409523",
+    "region": "경기"
   },
   {
     "title": "경복궁 생과방",
@@ -75,7 +80,8 @@
     "contentid": "2615461",
     "areacode": "",
     "mapx": "126.97672186606306",
-    "mapy": "37.576030700049394"
+    "mapy": "37.576030700049394",
+    "region": "서울"
   },
   {
     "title": "경북영주 풍기인삼축제",
@@ -88,7 +94,8 @@
     "contentid": "506766",
     "areacode": "",
     "mapx": "128.521518",
-    "mapy": "36.868718"
+    "mapy": "36.868718",
+    "region": "경북"
   },
   {
     "title": "경산자인단오제",
@@ -101,7 +108,8 @@
     "contentid": "1642876",
     "areacode": "",
     "mapx": "128.81899581333252",
-    "mapy": "35.81784607916508"
+    "mapy": "35.81784607916508",
+    "region": "경북"
   },
   {
     "title": "경산카페축제",
@@ -114,7 +122,8 @@
     "contentid": "3497502",
     "areacode": "",
     "mapx": "128.729631126808",
-    "mapy": "35.8247094097289"
+    "mapy": "35.8247094097289",
+    "region": "경북"
   },
   {
     "title": "경춘선 공릉숲길 커피축제",
@@ -127,7 +136,8 @@
     "contentid": "3114588",
     "areacode": "",
     "mapx": "127.07300553287968",
-    "mapy": "37.62547641844463"
+    "mapy": "37.62547641844463",
+    "region": "서울"
   },
   {
     "title": "경흥대로 도봉옛길 문화제",
@@ -140,7 +150,8 @@
     "contentid": "2725188",
     "areacode": "",
     "mapx": "127.048657",
-    "mapy": "37.691173"
+    "mapy": "37.691173",
+    "region": "서울"
   },
   {
     "title": "고양행주문화제",
@@ -153,7 +164,8 @@
     "contentid": "530450",
     "areacode": "",
     "mapx": "126.82458867111622",
-    "mapy": "37.60042677430548"
+    "mapy": "37.60042677430548",
+    "region": "경기"
   },
   {
     "title": "고창모양성제",
@@ -166,7 +178,8 @@
     "contentid": "604454",
     "areacode": "",
     "mapx": "126.70350182663505",
-    "mapy": "35.43314793158578"
+    "mapy": "35.43314793158578",
+    "region": "전북"
   },
   {
     "title": "광안리 M(Marvelous) 드론 라이트쇼",
@@ -179,7 +192,8 @@
     "contentid": "2786391",
     "areacode": "6",
     "mapx": "129.1185477876",
-    "mapy": "35.1538130576"
+    "mapy": "35.1538130576",
+    "region": "부산"
   },
   {
     "title": "광안리어방축제",
@@ -188,11 +202,12 @@
     "thumb": "https://tong.visitkorea.or.kr/cms/resource/95/3485995_image3_1.jpg",
     "start": "20260612",
     "end": "20260614",
-    "tel": "051-610-4062",
+    "tel": "051-610-4212",
     "contentid": "506545",
     "areacode": "",
     "mapx": "129.1185199367098",
-    "mapy": "35.153772788647494"
+    "mapy": "35.153772788647494",
+    "region": "부산"
   },
   {
     "title": "광주 추억의 충장축제",
@@ -205,7 +220,8 @@
     "contentid": "692682",
     "areacode": "",
     "mapx": "126.91587",
-    "mapy": "35.150241"
+    "mapy": "35.150241",
+    "region": "광주"
   },
   {
     "title": "광주김치축제",
@@ -218,7 +234,8 @@
     "contentid": "604097",
     "areacode": "",
     "mapx": "126.85302648386858",
-    "mapy": "35.159003310180864"
+    "mapy": "35.159003310180864",
+    "region": "광주"
   },
   {
     "title": "구미라면 축제",
@@ -231,7 +248,8 @@
     "contentid": "3028462",
     "areacode": "",
     "mapx": "128.331422",
-    "mapy": "36.129404"
+    "mapy": "36.129404",
+    "region": "경북"
   },
   {
     "title": "구미푸드페스티벌",
@@ -244,7 +262,8 @@
     "contentid": "3017799",
     "areacode": "",
     "mapx": "128.349461",
-    "mapy": "36.116079"
+    "mapy": "36.116079",
+    "region": "경북"
   },
   {
     "title": "구팔일 댕댕이 대잔치！",
@@ -257,6 +276,147 @@
     "contentid": "3035057",
     "areacode": "",
     "mapx": "126.36737929508537",
-    "mapy": "33.39087381270927"
+    "mapy": "33.39087381270927",
+    "region": "제주"
+  },
+  {
+    "title": "국가유산 미디어아트",
+    "addr": "인천광역시 강화군 강화읍 북문길 42",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/40/4055040_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/40/4055040_image3_1.jpg",
+    "start": "20260814",
+    "end": "20261018",
+    "tel": "02-3011-7781",
+    "contentid": "3485078",
+    "areacode": "",
+    "mapx": "126.485390077081",
+    "mapy": "37.7508207355628",
+    "region": "인천"
+  },
+  {
+    "title": "국악공연 진연",
+    "addr": "서울특별시 종로구 인사동5길 10 (인사동)",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/35/4060435_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/35/4060435_image3_1.jpg",
+    "start": "20260101",
+    "end": "20261231",
+    "tel": "02-953-0515",
+    "contentid": "4060434",
+    "areacode": "",
+    "mapx": "126.985653181823",
+    "mapy": "37.5728652641047",
+    "region": "서울"
+  },
+  {
+    "title": "국제해양영화제 (KIOFF)",
+    "addr": "부산광역시 해운대구 수영강변대로 120 (우동)",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/84/4057984_image2_1.png",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/84/4057984_image3_1.png",
+    "start": "20260618",
+    "end": "20260621",
+    "tel": "051-790-9413",
+    "contentid": "2661307",
+    "areacode": "",
+    "mapx": "129.127084511585",
+    "mapy": "35.1710365257136",
+    "region": "부산"
+  },
+  {
+    "title": "군산 수제맥주&블루스 페스티벌",
+    "addr": "전북특별자치도 군산시 해망로 224 (장미동)",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/51/4062851_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/51/4062851_image3_1.jpg",
+    "start": "20260612",
+    "end": "20260614",
+    "tel": "063-454-5252",
+    "contentid": "2853719",
+    "areacode": "",
+    "mapx": "126.71314867726363",
+    "mapy": "35.989771658659194",
+    "region": "전북"
+  },
+  {
+    "title": "금산 삼계탕축제",
+    "addr": "충청남도 금산군 금산읍 인삼광장로 30",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/42/4064242_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/42/4064242_image3_1.jpg",
+    "start": "20260710",
+    "end": "20260712",
+    "tel": "041-750-2319",
+    "contentid": "2719507",
+    "areacode": "",
+    "mapx": "127.501197965095",
+    "mapy": "36.1001640876596",
+    "region": "충남"
+  },
+  {
+    "title": "금산세계인삼축제",
+    "addr": "충청남도 금산군 금산읍 인삼광장로 30",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/59/3524159_image2_1.JPG",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/59/3524159_image3_1.JPG",
+    "start": "20261002",
+    "end": "20261011",
+    "tel": "041-750-2319",
+    "contentid": "506465",
+    "areacode": "",
+    "mapx": "127.50052213463282",
+    "mapy": "36.10015350218243",
+    "region": "충남"
+  },
+  {
+    "title": "김제지평선축제",
+    "addr": "전북특별자치도 김제시 부량면 벽골제로 442",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/44/4013544_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/44/4013544_image3_1.jpg",
+    "start": "20261001",
+    "end": "20261005",
+    "tel": "063-540-3172",
+    "contentid": "574285",
+    "areacode": "",
+    "mapx": "126.8522718950694",
+    "mapy": "35.754021878713",
+    "region": "전북"
+  },
+  {
+    "title": "김천김밥축제",
+    "addr": "경상북도 김천시 대항면 황악로 1189-52",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/27/3544627_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/27/3544627_image3_1.jpg",
+    "start": "20261023",
+    "end": "20261025",
+    "tel": "053-965-0910",
+    "contentid": "3377995",
+    "areacode": "",
+    "mapx": "127.99484429506171",
+    "mapy": "36.102930074676955",
+    "region": "경북"
+  },
+  {
+    "title": "김천포도축제",
+    "addr": "경상북도 김천시 운동장길 1 김천종합스포츠타운",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/64/4060564_image2_1.JPG",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/64/4060564_image3_1.JPG",
+    "start": "20260814",
+    "end": "20260816",
+    "tel": "054-421-2532",
+    "contentid": "2751126",
+    "areacode": "",
+    "mapx": "128.087866077872",
+    "mapy": "36.1375841379792",
+    "region": "경북"
+  },
+  {
+    "title": "김포아라마린페스티벌",
+    "addr": "경기도 김포시 고촌읍 전호리 661",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/46/4063746_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/46/4063746_image3_1.jpg",
+    "start": "20260619",
+    "end": "20260621",
+    "tel": "031-999-7833",
+    "contentid": "2611559",
+    "areacode": "",
+    "mapx": "126.788068",
+    "mapy": "37.598656",
+    "region": "경기"
   }
 ]

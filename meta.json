@@ -1,7 +1,8 @@
 {
-  "updated_at": "2026-05-19 21:39:08",
+  "updated_at": "2026-05-20 07:48:56",
   "timezone": "KST",
-  "subsidies_count": 100,
-  "festivals_count": 30,
-  "upcoming_count": 20
+  "subsidies_count": 1000,
+  "festivals_count": 50,
+  "upcoming_count": 30,
+  "business_count": 159
 }
