@@ -113,7 +113,7 @@ def get_subsidies():
 def get_festivals(event_start_date, num_of_rows=30):
     """TourAPI에서 축제/행사 정보를 가져온다."""
     url = (
-        f"https://apis.data.go.kr/B551011/KorService2/searchFestival1"
+        f"https://apis.data.go.kr/B551011/KorService2/searchFestival2"
         f"?MobileOS=ETC&MobileApp=LifeInfo&_type=json"
         f"&numOfRows={num_of_rows}&pageNo=1"
         f"&eventStartDate={event_start_date}"
