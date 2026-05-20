@@ -93,77 +93,107 @@ def extract_region(addr):
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [핵심 매립] 전국민 / 소상공인 돈·고정비 혜택 필터링 엔진 v2
+# [핵심] 알짜 필터 v5 — 지원금 + 사업자 통합
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def filter_real_benefit_items(all_items):
-    """
-    v2 개정: drop_keywords를 대폭 확장하고, desc(설명)까지 교차 검증하여
-    어업/수산/선박/농업/축산/군사/외교/귀화 등 대중성 없는 항목을 원천 차단.
-    제목+설명 결합 텍스트에서 drop이 먼저 적용되고, pass가 나중에 적용됩니다.
-    """
-    approved_queue = []
 
-    # ── 1단계: 블랙리스트 (제목 OR 설명에 하나라도 있으면 즉시 제거) ──
-    drop_keywords = [
-        # 어업/수산/해양
-        "어업", "어선", "선박", "감척", "원양", "해기사", "수산", "양식",
-        "어촌", "어항", "어민", "조업", "해양사고", "심판변론", "위판장",
-        "연안선박", "연근해", "귀어", "합착", "해조류", "활어", "수협",
-        "어장", "어획", "해녀", "해수", "갯벌",
-        # 농업/축산/산림
-        "농업인", "농지", "축산", "가축", "산림", "임업", "잠사",
-        "농약", "비료", "농기계", "영농", "경작", "사료",
-        # 군사/외교/귀화
-        "국선 심판", "귀화", "국적회복", "군무원", "군인", "병역",
-        # 산업 R&D / 수출 / 특허
-        "전력기자재", "단체보험", "수출대금", "수출보험", "수출단체",
-        "해외박람회", "바이어", "스마트공장", "벤처인증", "특허",
-        "기술개발", "R&D", "기술사업화",
-        # 법인/단체/시설 감면 (개인 해당 없음)
-        "사회복지법인", "노인복지시설", "영유아보육시설", "보육시설 지방세",
-        "사회적기업 지방세", "국가유공자 단체",
-        # 기타 비대중
-        "우주", "항공우주", "원자력산업", "조선업종", "AI인프라",
-    ]
+# ── 지원금(subsidies) 전용 화이트리스트 ──
+SUBSIDY_WHITELIST = [
+    # 현금 직접 지급
+    "장려금", "근로장려", "자녀장려", "위로금",
+    "축하금", "출산축하", "격려금", "민생지원금",
+    "재난지원금",
 
-    # ── 2단계: 화이트리스트 (제목에 반드시 포함되어야 통과) ──
-    pass_keywords = [
-        # 고정비/공과금 절감
-        "전기세", "전기요금", "가스비", "에너지바우처", "난방비", "냉방비",
-        "공공요금", "배달비", "택배비", "임대료", "월세", "수수료",
-        "카드수수료", "통신비",
-        # 금융/이자/대출
-        "이자", "이차보전", "이자차액", "저금리", "무이자", "대환",
-        "대출", "융자", "정책자금", "육성자금", "경영안정자금", "특례보증",
-        # 직접 현금/수당
-        "지원금", "장려금", "근로장려금", "자녀장려금", "재난지원금",
-        "민생지원금", "수당", "환급", "교통비", "지역사랑상품권",
-        "지역화폐", "바우처", "쿠폰",
-        # 학비/교육
-        "학비", "장학금", "교육비", "교재비", "수업료", "등록금",
-        # 세금 감면 (개인 대상)
-        "취득세 감면", "자동차세 감면", "취득세감면", "자동차세감면",
-        # 보험료/건강
-        "건강보험", "보험료", "산재보험",
-        # 양육/출산
-        "양육수당", "출산", "육아", "부모급여", "아이돌봄",
-    ]
+    # 수당 (대중성 높은 것만)
+    "아동수당", "양육수당", "부모급여", "청년수당",
+    "실업급여", "상병수당", "구직급여",
 
+    # 학비/장학금
+    "장학금", "학비", "등록금", "급식비",
+
+    # 주거
+    "월세", "전세자금", "주거급여", "주거비",
+
+    # 공과금
+    "전기요금", "가스비", "난방비", "연료비",
+    "에너지바우처", "요금감면", "요금 감면",
+
+    # 바우처/상품권
+    "문화누리", "국민행복카드", "첫만남이용권",
+    "지역사랑상품권", "지역화폐",
+
+    # 세금 감면 (개인)
+    "취득세 감면", "자동차세 감면",
+    "취득세감면", "자동차세감면",
+
+    # 건강보험
+    "건강보험료", "보험료 지원", "보험료 감면",
+    "보험료 경감",
+
+    # 출산/육아
+    "출산지원", "출산장려", "출산비", "산후조리",
+    "난임", "임신지원", "보육료",
+
+    # 돌봄
+    "아이돌봄",
+]
+
+# ── 사업자(business) 전용 화이트리스트 ──
+BIZ_WHITELIST = [
+    # 소상공인 직접 자금
+    "소상공인", "정책자금", "경영안정자금",
+    "특례보증", "이차보전", "이자차액",
+    "무이자", "저금리",
+
+    # 소상공인 고정비 지원
+    "임대료", "월세", "배달비", "카드수수료",
+    "전기요금", "에너지",
+
+    # 청년 창업
+    "청년창업", "창업자금", "창업지원",
+
+    # 소상공인 직접 바우처/상품권
+    "온누리상품권", "지역사랑상품권",
+]
+
+# ── 사업자 블랙리스트 (화이트 통과해도 최종 차단) ──
+BIZ_BLACKLIST = [
+    "수출", "해외", "바이어", "박람회",
+    "R&D", "기술개발", "특허", "인증",
+    "스마트공장", "AI인프라", "원자력",
+    "항공우주", "조선업", "방위산업",
+    "양식", "어업", "수산", "농업",
+    "산림", "축산", "가축", "사료",
+]
+
+
+def filter_subsidy_items(all_items):
+    """지원금 필터: 화이트리스트 온리, 제목 기준"""
+    result = []
     for item in all_items:
-        title = item.get("name", item.get("title", ""))
-        desc = item.get("desc", item.get("description", ""))
-        # 제목 + 설명 결합하여 블랙리스트 체크
+        title = item.get("name", "")
+        if any(kw in title for kw in SUBSIDY_WHITELIST):
+            result.append(item)
+    return result
+
+
+def filter_biz_items(all_items):
+    """사업자 필터: 화이트리스트 통과 → 블랙리스트 최종 차단"""
+    result = []
+    for item in all_items:
+        title = item.get("title", "")
+        desc = item.get("desc", "")
         combined = title + " " + desc
 
-        # 블랙리스트: 결합 텍스트에 금지어가 있으면 즉시 탈락
-        if any(dw in combined for dw in drop_keywords):
+        # 화이트리스트 통과 필수
+        if not any(kw in title for kw in BIZ_WHITELIST):
             continue
 
-        # 화이트리스트: 제목에 핵심 키워드가 있어야 통과
-        if any(pw in title for pw in pass_keywords):
-            approved_queue.append(item)
+        # 블랙리스트 최종 차단
+        if any(bk in combined for bk in BIZ_BLACKLIST):
+            continue
 
-    return approved_queue
+        result.append(item)
+    return result
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def get_subsidies():
@@ -340,16 +370,16 @@ def main():
     print(f"===== 혜택존 자동 데이터 정제 파이프라인 가동 =====")
     print(f"시각: {NOW.strftime('%Y-%m-%d %H:%M:%S')} KST | 기준일: {TODAY}")
 
-    # 1. 정부 지원금 (전체 가져와서 현금/고정비 정밀 필터링 단행)
+    # 1. 정부 지원금
     raw_subsidies = get_subsidies()
     if raw_subsidies:
-        subsidies = filter_real_benefit_items(raw_subsidies)
+        subsidies = filter_subsidy_items(raw_subsidies)
         save_json("subsidies.json", subsidies)
     else:
         subsidies = []
         print("  WARN: 지원금 데이터 수집 실패 — 기존 파일 보존")
 
-    # 2. 축제/행사 파트 (규격 유지)
+    # 2. 축제/행사
     festivals, upcoming = collect_festivals()
     if festivals:
         save_json("festivals.json", festivals)
@@ -361,16 +391,16 @@ def main():
     else:
         print("  WARN: 다가오는 행사 수집 실패 — 기존 파일 보존")
 
-    # 3. 사업자 지원 (가져와서 정책 대출/이자 감면/고정비 특별 지원 필터링 단행)
+    # 3. 사업자 지원
     raw_business = get_business()
     if raw_business:
-        business = filter_real_benefit_items(raw_business)
+        business = filter_biz_items(raw_business)
         save_json("business.json", business)
     else:
         business = []
         print("  WARN: 사업자 지원 수집 실패 — 기존 파일 보존")
 
-    # 4. 메타 데이터 빌드 및 정제 카운트 동기화
+    # 4. 메타
     meta = {
         "updated_at": NOW.strftime("%Y-%m-%d %H:%M:%S"),
         "timezone": "KST",
@@ -381,8 +411,8 @@ def main():
     }
     save_json("meta.json", meta)
 
-    print(f"\n===== 데이터 파이프라인 빌드 정상 완료 =====")
-    print(f"최종 저장 내역 -> 지원금: {len(subsidies)}건 | 사업자: {len(business)}건 | 축제: {len(festivals)}건")
+    print(f"\n===== 완료 =====")
+    print(f"지원금: {len(subsidies)}건 | 사업자: {len(business)}건 | 축제: {len(festivals)}건")
 
 
 if __name__ == "__main__":
