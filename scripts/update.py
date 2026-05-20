@@ -93,69 +93,139 @@ def extract_region(addr):
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# [핵심] 알짜 필터 v5 — 지원금 + 사업자 통합
+# [핵심] 알짜 필터 v7 — 다수가 받는 혜택만
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# ── 지원금(subsidies) 전용 화이트리스트 ──
+# ── 지원금: 다수가 받는 것만 ──
 SUBSIDY_WHITELIST = [
-    # 현금 직접 지급
-    "장려금", "근로장려", "자녀장려", "위로금",
-    "축하금", "출산축하", "격려금", "민생지원금",
-    "재난지원금",
+    # 현금 (다수 대상)
+    "근로장려", "자녀장려", "민생지원금", "재난지원금",
+    "아동수당", "양육수당", "부모급여",
+    "실업급여", "구직급여",
 
-    # 수당 (대중성 높은 것만)
-    "아동수당", "양육수당", "부모급여", "청년수당",
-    "실업급여", "상병수당", "구직급여",
+    # 출산/육아 (부모 다수)
+    "출산지원", "출산장려", "출산축하", "출산비",
+    "산후조리", "난임", "보육료", "첫만남이용권",
+    "임신지원",
 
-    # 학비/장학금
-    "장학금", "학비", "등록금", "급식비",
+    # 시니어/어르신 (다수 대상)
+    "기초연금", "노인일자리", "경로수당",
+    "장기요양", "노인돌봄", "치매",
+    "틀니", "임플란트", "안검하수",
+    "어르신 교통", "경로우대",
+    "장수수당", "장수축하",
+    "냉난방비",
 
-    # 주거
+    # 주거 (청년/신혼/저소득 다수)
     "월세", "전세자금", "주거급여", "주거비",
+    "주거바우처", "신혼부부 주거",
 
-    # 공과금
+    # 공과금 (다수 절감)
     "전기요금", "가스비", "난방비", "연료비",
-    "에너지바우처", "요금감면", "요금 감면",
+    "에너지바우처",
 
-    # 바우처/상품권
-    "문화누리", "국민행복카드", "첫만남이용권",
+    # 바우처/상품권 (누구나)
+    "문화누리", "국민행복카드",
     "지역사랑상품권", "지역화폐",
 
-    # 세금 감면 (개인)
-    "취득세 감면", "자동차세 감면",
-    "취득세감면", "자동차세감면",
+    # 건강보험 (저소득 다수)
+    "건강보험료",
 
-    # 건강보험
-    "건강보험료", "보험료 지원", "보험료 감면",
-    "보험료 경감",
+    # 세금 감면 (다자녀/장애인 다수)
+    "자동차세 감면", "자동차세감면",
+    "취득세 감면", "취득세감면",
 
-    # 출산/육아
-    "출산지원", "출산장려", "출산비", "산후조리",
-    "난임", "임신지원", "보육료",
-
-    # 돌봄
-    "아이돌봄",
+    # 교육 (보편적인 것만)
+    "교육비 지원", "급식비",
 ]
 
-# ── 사업자(business) 전용 화이트리스트 ──
+# ── 지원금: 화이트 통과해도 최종 차단 ──
+SUBSIDY_BLACKLIST = [
+    # 소수/특정 대상
+    "장학금", "장학생",
+    "국가유공", "보훈", "참전", "유공자",
+    "고엽제", "민주화운동", "5·18", "5.18",
+    "의사상자", "특별공로",
+    # 농축수산
+    "농업", "축산", "수산", "어업", "어민",
+    "농가", "한우", "고급육", "친환경 농산물",
+    "양식", "어촌", "영농", "농림",
+    "사료", "종묘", "종자",
+    # 기관/법인/종사자
+    "법인", "종사자",
+    "사회적기업", "교육연구단",
+    # 공무원/군인
+    "공무원", "군무원", "군인", "병역",
+    # 귀화/외국인
+    "귀화", "국적회복",
+]
+
+
+def normalize_name(name):
+    """지자체명 제거하여 중복 비교용 키 생성"""
+    import re
+    name = re.sub(r'\([^)]*\)', '', name)
+    name = re.sub(r'^[가-힣]{2,10}(특별자치)?시\s*', '', name)
+    name = re.sub(r'^[가-힣]{2,10}구\s*', '', name)
+    name = re.sub(r'^[가-힣]{2,10}군\s*', '', name)
+    name = re.sub(r'^[가-힣]{2,10}(특별자치)?도\s*', '', name)
+    return name.strip()
+
+
+def filter_subsidy_items(all_items):
+    """
+    v7: 화이트 매칭 → 블랙 차단 → 지자체 중복 제거
+    """
+    # 1단계: 화이트리스트 매칭
+    matched = []
+    for item in all_items:
+        title = item.get("name", "")
+        if any(kw in title for kw in SUBSIDY_WHITELIST):
+            matched.append(item)
+
+    # 2단계: 블랙리스트 차단
+    cleaned = []
+    for item in matched:
+        title = item.get("name", "")
+        desc = item.get("desc", "")
+        target = item.get("target", "")
+        combined = title + " " + desc + " " + target
+        if any(bk in combined for bk in SUBSIDY_BLACKLIST):
+            continue
+        cleaned.append(item)
+
+    # 3단계: 전국은 전부 유지, 지자체는 지역+유형당 1건만
+    national = []
+    local_by_type = {}
+
+    for item in cleaned:
+        region = item.get("region", "전국")
+        if region == "전국":
+            national.append(item)
+        else:
+            type_key = "기타"
+            for kw in SUBSIDY_WHITELIST:
+                if kw in item.get("name", ""):
+                    type_key = kw
+                    break
+            group_key = f"{region}_{type_key}"
+            if group_key not in local_by_type:
+                local_by_type[group_key] = item
+
+    return national + list(local_by_type.values())
+
+
+# ── 사업자 (기존 v5 유지) ──
 BIZ_WHITELIST = [
-    # 소상공인 직접 자금
     "소상공인", "정책자금", "경영안정자금",
     "특례보증", "이차보전", "이자차액",
     "무이자", "저금리",
-
-    # 소상공인 고정비 지원
     "임대료", "월세", "배달비", "카드수수료",
     "전기요금", "에너지",
-
-    # 청년 창업
     "청년창업", "창업자금", "창업지원",
-
-    # 소상공인 직접 바우처/상품권
     "온누리상품권", "지역사랑상품권",
 ]
 
-# ── 사업자 블랙리스트 (화이트 통과해도 최종 차단) ──
 BIZ_BLACKLIST = [
     "수출", "해외", "바이어", "박람회",
     "R&D", "기술개발", "특허", "인증",
@@ -166,32 +236,17 @@ BIZ_BLACKLIST = [
 ]
 
 
-def filter_subsidy_items(all_items):
-    """지원금 필터: 화이트리스트 온리, 제목 기준"""
-    result = []
-    for item in all_items:
-        title = item.get("name", "")
-        if any(kw in title for kw in SUBSIDY_WHITELIST):
-            result.append(item)
-    return result
-
-
 def filter_biz_items(all_items):
-    """사업자 필터: 화이트리스트 통과 → 블랙리스트 최종 차단"""
+    """사업자 필터: 화이트 → 블랙 차단"""
     result = []
     for item in all_items:
         title = item.get("title", "")
         desc = item.get("desc", "")
         combined = title + " " + desc
-
-        # 화이트리스트 통과 필수
         if not any(kw in title for kw in BIZ_WHITELIST):
             continue
-
-        # 블랙리스트 최종 차단
         if any(bk in combined for bk in BIZ_BLACKLIST):
             continue
-
         result.append(item)
     return result
 
