@@ -56,6 +56,20 @@
     "region": "강원"
   },
   {
+    "title": "거제 옥포대첩 축제",
+    "addr": "경상남도 거제시 옥포동 1978-1",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/45/4066645_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/45/4066645_image3_1.jpg",
+    "start": "20260612",
+    "end": "20260614",
+    "tel": "055-639-3393",
+    "contentid": "1327778",
+    "areacode": "",
+    "mapx": "128.696593908688",
+    "mapy": "34.8904967713978",
+    "region": "경남"
+  },
+  {
     "title": "경기미 김밥페스타",
     "addr": "경기도 수원시 영통구 광교중앙로 140 (하동)",
     "image": "https://tong.visitkorea.or.kr/cms/resource/42/4058642_image2_1.jpg",
@@ -68,20 +82,6 @@
     "mapx": "127.05944694152052",
     "mapy": "37.28582866409523",
     "region": "경기"
-  },
-  {
-    "title": "경복궁 생과방",
-    "addr": "서울특별시 종로구 사직로 161 (세종로)",
-    "image": "https://tong.visitkorea.or.kr/cms/resource/63/4055163_image2_1.jpg",
-    "thumb": "https://tong.visitkorea.or.kr/cms/resource/63/4055163_image3_1.jpg",
-    "start": "20260408",
-    "end": "20260527",
-    "tel": "1522-2295",
-    "contentid": "2615461",
-    "areacode": "",
-    "mapx": "126.97672186606306",
-    "mapy": "37.576030700049394",
-    "region": "서울"
   },
   {
     "title": "경북영주 풍기인삼축제",
@@ -165,6 +165,20 @@
     "areacode": "",
     "mapx": "126.82458867111622",
     "mapy": "37.60042677430548",
+    "region": "경기"
+  },
+  {
+    "title": "고양행주한우 숯불구이축제",
+    "addr": "경기도 고양시 덕양구 원당로 16 (주교동)",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/73/4066273_image2_1.JPG",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/73/4066273_image3_1.JPG",
+    "start": "20261031",
+    "end": "20261101",
+    "tel": "031-960-3034,3050",
+    "contentid": "3383613",
+    "areacode": "",
+    "mapx": "126.83276387204035",
+    "mapy": "37.654669772497314",
     "region": "경기"
   },
   {
@@ -336,6 +350,20 @@
     "region": "전북"
   },
   {
+    "title": "군산시간여행축제",
+    "addr": "전북특별자치도 군산시 중앙로1가",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/48/3561448_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/48/3561448_image3_1.jpg",
+    "start": "20261002",
+    "end": "20261005",
+    "tel": "063-454-3300",
+    "contentid": "1846797",
+    "areacode": "",
+    "mapx": "126.711671",
+    "mapy": "35.987791",
+    "region": "전북"
+  },
+  {
     "title": "금산 삼계탕축제",
     "addr": "충청남도 금산군 금산읍 인삼광장로 30",
     "image": "https://tong.visitkorea.or.kr/cms/resource/42/4064242_image2_1.jpg",
@@ -390,33 +418,5 @@
     "mapx": "127.99484429506171",
     "mapy": "36.102930074676955",
     "region": "경북"
-  },
-  {
-    "title": "김천포도축제",
-    "addr": "경상북도 김천시 운동장길 1 김천종합스포츠타운",
-    "image": "https://tong.visitkorea.or.kr/cms/resource/64/4060564_image2_1.JPG",
-    "thumb": "https://tong.visitkorea.or.kr/cms/resource/64/4060564_image3_1.JPG",
-    "start": "20260814",
-    "end": "20260816",
-    "tel": "054-421-2532",
-    "contentid": "2751126",
-    "areacode": "",
-    "mapx": "128.087866077872",
-    "mapy": "36.1375841379792",
-    "region": "경북"
-  },
-  {
-    "title": "김포아라마린페스티벌",
-    "addr": "경기도 김포시 고촌읍 전호리 661",
-    "image": "https://tong.visitkorea.or.kr/cms/resource/46/4063746_image2_1.jpg",
-    "thumb": "https://tong.visitkorea.or.kr/cms/resource/46/4063746_image3_1.jpg",
-    "start": "20260619",
-    "end": "20260621",
-    "tel": "031-999-7833",
-    "contentid": "2611559",
-    "areacode": "",
-    "mapx": "126.788068",
-    "mapy": "37.598656",
-    "region": "경기"
   }
 ]

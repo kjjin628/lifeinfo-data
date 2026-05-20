@@ -56,6 +56,20 @@
     "region": "강원"
   },
   {
+    "title": "거제 옥포대첩 축제",
+    "addr": "경상남도 거제시 옥포동 1978-1",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/45/4066645_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/45/4066645_image3_1.jpg",
+    "start": "20260612",
+    "end": "20260614",
+    "tel": "055-639-3393",
+    "contentid": "1327778",
+    "areacode": "",
+    "mapx": "128.696593908688",
+    "mapy": "34.8904967713978",
+    "region": "경남"
+  },
+  {
     "title": "경기미 김밥페스타",
     "addr": "경기도 수원시 영통구 광교중앙로 140 (하동)",
     "image": "https://tong.visitkorea.or.kr/cms/resource/42/4058642_image2_1.jpg",
@@ -165,6 +179,20 @@
     "areacode": "",
     "mapx": "126.82458867111622",
     "mapy": "37.60042677430548",
+    "region": "경기"
+  },
+  {
+    "title": "고양행주한우 숯불구이축제",
+    "addr": "경기도 고양시 덕양구 원당로 16 (주교동)",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/73/4066273_image2_1.JPG",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/73/4066273_image3_1.JPG",
+    "start": "20261031",
+    "end": "20261101",
+    "tel": "031-960-3034,3050",
+    "contentid": "3383613",
+    "areacode": "",
+    "mapx": "126.83276387204035",
+    "mapy": "37.654669772497314",
     "region": "경기"
   },
   {
@@ -348,6 +376,34 @@
     "mapx": "126.71314867726363",
     "mapy": "35.989771658659194",
     "region": "전북"
+  },
+  {
+    "title": "군산시간여행축제",
+    "addr": "전북특별자치도 군산시 중앙로1가",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/48/3561448_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/48/3561448_image3_1.jpg",
+    "start": "20261002",
+    "end": "20261005",
+    "tel": "063-454-3300",
+    "contentid": "1846797",
+    "areacode": "",
+    "mapx": "126.711671",
+    "mapy": "35.987791",
+    "region": "전북"
+  },
+  {
+    "title": "금사참외축제",
+    "addr": "경기도 여주시 금사면 이여로 1278",
+    "image": "https://tong.visitkorea.or.kr/cms/resource/31/4066531_image2_1.jpg",
+    "thumb": "https://tong.visitkorea.or.kr/cms/resource/31/4066531_image3_1.jpg",
+    "start": "20260522",
+    "end": "20260524",
+    "tel": "031-887-3893",
+    "contentid": "141251",
+    "areacode": "",
+    "mapx": "127.53220602361",
+    "mapy": "37.3891841805042",
+    "region": "경기"
   },
   {
     "title": "금산 삼계탕축제",
@@ -641,62 +697,6 @@
     "areacode": "",
     "mapx": "128.9681914",
     "mapy": "35.1728573",
-    "region": "부산"
-  },
-  {
-    "title": "부산국제매직페스티벌",
-    "addr": "부산광역시 해운대구 수영강변대로 120 (우동)",
-    "image": "https://tong.visitkorea.or.kr/cms/resource/20/4064420_image2_1.jpg",
-    "thumb": "https://tong.visitkorea.or.kr/cms/resource/20/4064420_image3_1.jpg",
-    "start": "20260626",
-    "end": "20260626",
-    "tel": "051-626-7002",
-    "contentid": "1032770",
-    "areacode": "",
-    "mapx": "129.127084511585",
-    "mapy": "35.1710365257136",
-    "region": "부산"
-  },
-  {
-    "title": "부산세계시민축제",
-    "addr": "부산광역시 동구 이순신대로 164 (초량동)",
-    "image": "https://tong.visitkorea.or.kr/cms/resource/78/4062178_image2_1.jpg",
-    "thumb": "https://tong.visitkorea.or.kr/cms/resource/78/4062178_image3_1.jpg",
-    "start": "20260523",
-    "end": "20260523",
-    "tel": "051-711-6845",
-    "contentid": "2757747",
-    "areacode": "",
-    "mapx": "129.046419317203",
-    "mapy": "35.1144041132089",
-    "region": "부산"
-  },
-  {
-    "title": "부산원아시아페스티벌(BOF) with NOL",
-    "addr": "부산광역시 연제구 월드컵대로 344 (거제동)",
-    "image": "https://tong.visitkorea.or.kr/cms/resource/56/4040656_image2_1.jpg",
-    "thumb": "https://tong.visitkorea.or.kr/cms/resource/56/4040656_image3_1.jpg",
-    "start": "20260627",
-    "end": "20260628",
-    "tel": "051-780-4159",
-    "contentid": "2390168",
-    "areacode": "",
-    "mapx": "129.058356000232",
-    "mapy": "35.1900874394895",
-    "region": "부산"
-  },
-  {
-    "title": "부산항축제",
-    "addr": "부산광역시 동구 이순신대로 164 (초량동)",
-    "image": "https://tong.visitkorea.or.kr/cms/resource/70/4058670_image2_1.jpg",
-    "thumb": "https://tong.visitkorea.or.kr/cms/resource/70/4058670_image3_1.jpg",
-    "start": "20260619",
-    "end": "20260620",
-    "tel": "051-713-5000",
-    "contentid": "1007868",
-    "areacode": "",
-    "mapx": "129.046419317203",
-    "mapy": "35.1144041132089",
     "region": "부산"
   }
 ]
