@@ -168,36 +168,53 @@ function getItems(){
   return items;
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   [최종 수리 완료] 연동 게이트웨이 및 원본 링크 우회 라우터
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function getUrl(tab,item){
   var p=state.posted||{};
   var blog=null;
-  if(tab==='subsidies'&&p.subsidies)blog=p.subsidies[item.id]||null;
-  else if(tab==='business'&&p.business)blog=p.business[item.title]||null;
-  else if(p.festivals)blog=p.festivals[item.contentid]||null;
-  if(blog)return blog;
-  if(item.url&&item.url.length>5)return item.url;
+  
+  // 1순위: 자동 글쓰기 프로그램이 갱신해 준 내 블로그 실물 주소 체크
+  if(tab==='subsidies' && p.subsidies) {
+    blog = p.subsidies[item.id] || null;
+  } else if(tab==='business' && p.business) {
+    blog = p.business[item.title] || null;
+  } else if((tab==='festivals' || tab==='upcoming') && p.festivals) {
+    // 축제는 고유 ID 파편화 이슈 방어를 위해 '축제 명칭(title)' 자체를 키로 연동 매핑
+    blog = p.festivals[item.title] || null;
+  }
+  
+  if(blog) return blog;
+  
+  // 2순위: 내 블로그 글이 아직 안 올라갔을 때 작동하는 원본 공공기관 가이드라인
   if(tab==='subsidies'){
-  if(item.id){
-    // 지역 지원금은 정부24에서 ID 조회가 안 되므로 검색으로 보냄
-    if(item.region && item.region!=='전국'){
-      return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
+    if(item.id){
+      if(item.region && item.region!=='전국'){
+        return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
+      }
+      return 'https://www.gov.kr/portal/rcvfvrSvc/dtlEx/'+item.id;
     }
-    return 'https://www.gov.kr/portal/rcvfvrSvc/dtlEx/'+item.id;
+    return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
   }
-  return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
-}
+  
   if(tab==='business'){
-    return 'https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId='+encodeURIComponent(item.title||'');
+    return item.url || 'https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId='+encodeURIComponent(item.title||'');
   }
-  if(item.contentid)return 'https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid='+item.contentid;
-  return 'https://korean.visitkorea.or.kr/search/search.do?keyword='+encodeURIComponent(item.title||'');
+  
+  if(tab==='festivals' || tab==='upcoming'){
+    // 한국관광공사 UUID 변동 타격 해결: 사장님이 지정하신 구글 검색 우회로 완벽 복구
+    return 'https://www.google.com/search?q='+encodeURIComponent((item.title||'')+' 대한민국 구석구석 축제');
+  }
+  
+  return '#';
 }
 
 function hasBlog(tab,item){
   var p=state.posted||{};
-  if(tab==='subsidies'&&p.subsidies)return !!p.subsidies[item.id];
-  if(tab==='business'&&p.business)return !!p.business[item.title];
-  if(p.festivals)return !!p.festivals[item.contentid];
+  if(tab==='subsidies' && p.subsidies) return !!p.subsidies[item.id];
+  if(tab==='business' && p.business) return !!p.business[item.title];
+  if((tab==='festivals' || tab==='upcoming') && p.festivals) return !!p.festivals[item.title];
   return false;
 }
 
