@@ -177,7 +177,7 @@ function getUrl(tab,item){
   if(blog)return blog;
   if(item.url&&item.url.length>5)return item.url;
   if(tab==='subsidies'){
-    if(item.id)return 'https://www.gov.kr/portal/rcvfvrSvc/dtlEx/'+item.id;
+    if(item.id)return 'https://www.gov.kr/portal/rcvfvrSvc/dtlEx/'+item.id+'?svcId='+item.id;
     return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
   }
   if(tab==='business'){
