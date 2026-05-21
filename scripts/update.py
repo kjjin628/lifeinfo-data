@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-혜택존 데이터 갱신 스크립트 — 필터 v9 (최종)
-- 지원금: 지역 중복 제거 로직 삭제, 화이트+블랙만으로 알짜 필터링
-- 사업자: 기존 화이트+블랙 유지
-- 축제/행사: 기존 유지
-- 지역 필터링은 프론트엔드(블로그 테마)에서 처리
+혜택존 데이터 갱신 스크립트 — 금융/소상공인 올인 정화 버전
+- 축제 및 행사(TourAPI) 관련 수집 로직 완전 제거
+- 지원금: 지정 화이트+블랙리스트 기반 알짜 필터링 및 서비스ID 중복 제거
+- 사업자: 소상공인 중심의 금융/고정비 지원 사업 정밀 필터링
+- 메타: 축제 카운트를 제외한 순수 자금 데이터 현황 빌드
 """
 
 import json
@@ -27,7 +27,6 @@ if not BIZ_KEY:
     print("WARN: BIZ_API_KEY 없음 — 기업마당 데이터 건너뜀")
 
 API_KEY_GOV = API_KEY
-API_KEY_TOUR = urllib.parse.quote(API_KEY, safe="")
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 NOW = datetime.datetime.now(KST)
@@ -59,23 +58,11 @@ def save_json(filename, data):
 
 # ─── 지역 추출 ───
 REGION_KEYWORDS = {
-    "서울": ["서울"],
-    "경기": ["경기"],
-    "부산": ["부산"],
-    "대구": ["대구"],
-    "인천": ["인천"],
-    "광주": ["광주광역"],
-    "대전": ["대전"],
-    "울산": ["울산"],
-    "세종": ["세종"],
-    "강원": ["강원"],
-    "충북": ["충청북", "충북"],
-    "충남": ["충청남", "충남"],
-    "전북": ["전라북", "전북특별", "전북"],
-    "전남": ["전라남", "전남"],
-    "경북": ["경상북", "경북"],
-    "경남": ["경상남", "경남"],
-    "제주": ["제주"],
+    "서울": ["서울"], "경기": ["경기"], "부산": ["부산"], "대구": ["대구"],
+    "인천": ["인천"], "광주": ["광주광역"], "대전": ["대전"], "울산": ["울산"],
+    "세종": ["세종"], "강원": ["강원"], "충북": ["충청북", "충북"], "충남": ["충청남", "충남"],
+    "전북": ["전라북", "전북특별", "전북"], "전남": ["전라남", "전남"], "경북": ["경상북", "경북"],
+    "경남": ["경상남", "경남"], "제주": ["제주"],
 }
 
 
@@ -90,81 +77,59 @@ def extract_region(addr):
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 필터 v9 — 화이트+블랙만, 지역 중복 제거 없음
+# 💰 정부 지원금 정밀 필터셋
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 SUBSIDY_WHITELIST = [
     # 현금 (다수 대상)
     "근로장려", "자녀장려", "민생지원금", "재난지원금",
-    "아동수당", "양육수당", "부모급여",
-    "실업급여", "구직급여",
+    "아동수당", "양육수당", "부모급여", "실업급여", "구직급여",
     # 출산/육아
     "출산지원", "출산장려", "출산축하", "출산비",
-    "산후조리", "난임", "보육료", "첫만남이용권",
-    "임신지원",
+    "산후조리", "난임", "보육료", "첫만남이용권", "임신지원",
     # 시니어/어르신
-    "기초연금", "노인일자리", "경로수당",
-    "장기요양", "노인돌봄", "치매",
-    "틀니", "임플란트", "안검하수",
-    "어르신 교통", "경로우대",
-    "장수수당", "장수축하",
-    "냉난방비",
+    "기초연금", "노인일자리", "경로수당", "장기요양", "노인돌봄", "치매",
+    "틀니", "임플란트", "안검하수", "어르신 교통", "경로우대",
+    "장수수당", "장수축하", "냉난방비",
     # 주거
-    "월세", "전세자금", "주거급여", "주거비",
-    "주거바우처", "신혼부부 주거",
+    "월세", "전세자금", "주거급여", "주거비", "주거바우처", "신혼부부 주거",
     # 공과금
-    "전기요금", "가스비", "난방비", "연료비",
-    "에너지바우처",
+    "전기요금", "가스비", "난방비", "연료비", "energy바우처", "에너지바우처",
     # 바우처/상품권
-    "문화누리", "국민행복카드",
-    "지역사랑상품권", "지역화폐",
+    "문화누리", "국민행복카드", "지역사랑상품권", "지역화폐",
     # 건강보험
     "건강보험료",
     # 세금 감면
-    "자동차세 감면", "자동차세감면",
-    "취득세 감면", "취득세감면",
+    "자동차세 감면", "자동차세감면", "취득세 감면", "취득세감면",
     # 교육 (보편적)
     "교육비 지원", "급식비",
 ]
 
 SUBSIDY_BLACKLIST = [
     # 소수/특정 대상
-    "장학금", "장학생",
-    "국가유공", "보훈", "참전", "유공자",
-    "고엽제", "민주화운동", "5·18", "5.18",
-    "의사상자", "특별공로",
+    "장학금", "장학생", "국가유공", "보훈", "참전", "유공자",
+    "고엽제", "민주화운동", "5·18", "5.18", "의사상자", "특별공로",
     # 농축수산
-    "농업", "축산", "수산", "어업", "어민",
-    "농가", "한우", "고급육", "친환경 농산물",
-    "양식", "어촌", "영농", "농림",
-    "사료", "종묘", "종자",
+    "농업", "축산", "수산", "어업", "어민", "농가", "한우", "고급육", 
+    "친환경 농산물", "양식", "어촌", "영농", "농림", "사료", "종묘", "종자",
     # 기관/법인/종사자
-    "법인", "종사자",
-    "사회적기업", "교육연구단",
+    "법인", "종사자", "사회적기업", "교육연구단",
     # 공무원/군인
     "공무원", "군무원", "군인", "병역",
     # 귀화/외국인
-    "귀화", "국적회복",
-    # 북한이탈
-    "북한이탈", "탈북",
+    "귀화", "국적회복", "북한이탈", "탈북",
     # 기관 전용
     "전문인력양성기관",
 ]
 
 
 def filter_subsidy_items(all_items):
-    """
-    v9: 화이트 매칭 → 블랙 차단 → 지역 중복 제거 없음 (프론트엔드에서 처리)
-    동일 서비스ID 중복만 제거
-    """
-    # 1단계: 화이트리스트 매칭
     matched = []
     for item in all_items:
         title = item.get("name", "")
         if any(kw in title for kw in SUBSIDY_WHITELIST):
             matched.append(item)
 
-    # 2단계: 블랙리스트 차단
     cleaned = []
     for item in matched:
         title = item.get("name", "")
@@ -175,7 +140,6 @@ def filter_subsidy_items(all_items):
             continue
         cleaned.append(item)
 
-    # 3단계: 서비스ID 기준 중복만 제거 (같은 항목이 여러 페이지에 중복 수집된 경우)
     seen_ids = set()
     deduped = []
     for item in cleaned:
@@ -185,28 +149,24 @@ def filter_subsidy_items(all_items):
         seen_ids.add(sid)
         deduped.append(item)
 
-    print(f"  필터 v9: 화이트 {len(matched)}건 → 블랙차단후 {len(cleaned)}건 → ID중복제거 {len(deduped)}건")
+    print(f"  지원금 필터링: 화이트 {len(matched)}건 → 블랙차단 {len(cleaned)}건 → ID중복제거 {len(deduped)}건")
     return deduped
 
 
-# ── 사업자 필터 ──
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🏢 소상공인·사업자 자금 정밀 필터셋
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 BIZ_WHITELIST = [
-    "소상공인", "정책자금", "경영안정자금",
-    "특례보증", "이차보전", "이자차액",
-    "무이자", "저금리",
-    "임대료", "월세", "배달비", "카드수수료",
-    "전기요금", "에너지",
-    "청년창업", "창업자금", "창업지원",
-    "온누리상품권", "지역사랑상품권",
+    "소상공인", "정책자금", "경영안정자금", "특례보증", "이차보전", "이자차액",
+    "무이자", "저금리", "임대료", "월세", "배달비", "카드수수료",
+    "전기요금", "에너지", "청년창업", "창업자금", "창업지원", "온누리상품권", "지역사랑상품권",
 ]
 
 BIZ_BLACKLIST = [
-    "수출", "해외", "바이어", "박람회",
-    "R&D", "기술개발", "특허", "인증",
-    "스마트공장", "AI인프라", "원자력",
-    "항공우주", "조선업", "방위산업",
-    "양식", "어업", "수산", "농업",
-    "산림", "축산", "가축", "사료",
+    "수출", "해외", "바이어", "박람회", "R&D", "기술개발", "특허", "인증",
+    "스마트공장", "AI인프라", "원자력", "항공우주", "조선업", "방위산업",
+    "양식", "어업", "수산", "농업", "산림", "축산", "가축", "사료",
 ]
 
 
@@ -221,11 +181,12 @@ def filter_biz_items(all_items):
         if any(bk in combined for bk in BIZ_BLACKLIST):
             continue
         result.append(item)
+    print(f"  사업자 필터링: 원본 {len(all_items)}건 → 정제후 {len(result)}건")
     return result
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 데이터 수집 함수들
+# 공공 API 수집 엔진
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def get_subsidies():
@@ -277,56 +238,6 @@ def get_subsidies():
     return result
 
 
-def get_festivals(event_start_date, num_of_rows=50):
-    url = (
-        f"https://apis.data.go.kr/B551011/KorService2/searchFestival2"
-        f"?MobileOS=ETC&MobileApp=BenefitZone&_type=json"
-        f"&numOfRows={num_of_rows}&pageNo=1"
-        f"&eventStartDate={event_start_date}"
-        f"&serviceKey={API_KEY_TOUR}"
-    )
-    data = fetch_json(url)
-    if not data:
-        return []
-    try:
-        items = data["response"]["body"]["items"]["item"]
-        if not isinstance(items, list):
-            items = [items]
-    except (KeyError, TypeError):
-        return []
-
-    result = []
-    for item in items:
-        addr = item.get("addr1", "")
-        cid = item.get("contentid", "")
-        # ★ 한국관광공사 상세페이지 URL 자동 생성
-        detail_url = f"https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid={cid}" if cid else ""
-
-        result.append({
-            "title": item.get("title", ""),
-            "addr": addr,
-            "image": item.get("firstimage", ""),
-            "thumb": item.get("firstimage2", ""),
-            "start": item.get("eventstartdate", ""),
-            "end": item.get("eventenddate", ""),
-            "tel": item.get("tel", ""),
-            "contentid": cid,
-            "areacode": item.get("areacode", ""),
-            "mapx": item.get("mapx", ""),
-            "mapy": item.get("mapy", ""),
-            "region": extract_region(addr),
-            "url": detail_url,  # ★ 추가
-        })
-    return result
-
-def collect_festivals():
-    print("\n[2] 축제/행사 수집 중...")
-    current = get_festivals(TODAY, num_of_rows=50)
-    future_date = (NOW + datetime.timedelta(days=7)).strftime("%Y%m%d")
-    upcoming = get_festivals(future_date, num_of_rows=30)
-    return current, upcoming
-
-
 BIZ_FIELDS = {
     "01": "금융", "02": "기술", "03": "인력",
     "04": "수출", "05": "내수", "06": "창업",
@@ -336,10 +247,10 @@ BIZ_FIELDS = {
 
 def get_business():
     if not BIZ_KEY:
-        print("\n[3] 기업마당 — API 키 없음, 건너뜀")
+        print("\n[2] 기업마당 — API 키 없음, 건너뜀")
         return []
 
-    print("\n[3] 기업마당 수집 중...")
+    print("\n[2] 기업마당 수집 중...")
     all_items = []
 
     for field_code, field_name in BIZ_FIELDS.items():
@@ -393,13 +304,13 @@ def get_business():
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 메인
+# 메인 파이프라인 실행 구역
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 def main():
-    print(f"===== 혜택존 v9 파이프라인 =====")
+    print(f"===== 혜택존 자금 특화형 파이프라인 =====")
     print(f"시각: {NOW.strftime('%Y-%m-%d %H:%M:%S')} KST")
 
-    # 1. 지원금
+    # 1. 정부 지원금 수집 및 정제
     raw_subsidies = get_subsidies()
     if raw_subsidies:
         subsidies = filter_subsidy_items(raw_subsidies)
@@ -408,19 +319,7 @@ def main():
         subsidies = []
         print("  WARN: 지원금 수집 실패")
 
-    # 2. 축제
-    festivals, upcoming = collect_festivals()
-    if festivals:
-        save_json("festivals.json", festivals)
-    else:
-        print("  WARN: 축제 수집 실패")
-
-    if upcoming:
-        save_json("upcoming.json", upcoming)
-    else:
-        print("  WARN: 다가오는 행사 수집 실패")
-
-    # 3. 사업자
+    # 2. 기업마당 사업자 자금 수집 및 정제
     raw_business = get_business()
     if raw_business:
         business = filter_biz_items(raw_business)
@@ -429,19 +328,17 @@ def main():
         business = []
         print("  WARN: 사업자 수집 실패")
 
-    # 4. 메타
+    # 3. 데이터 현황 메타 파일 빌드 (축제 지표 완전 제외)
     meta = {
         "updated_at": NOW.strftime("%Y-%m-%d %H:%M:%S"),
         "timezone": "KST",
         "subsidies_count": len(subsidies),
-        "festivals_count": len(festivals),
-        "upcoming_count": len(upcoming),
         "business_count": len(business),
     }
     save_json("meta.json", meta)
 
-    print(f"\n===== 완료 =====")
-    print(f"지원금: {len(subsidies)}건 | 사업자: {len(business)}건 | 축제: {len(festivals)}건")
+    print(f"\n===== 정화 완료 =====")
+    print(f"최종 적재 결과 -> 지원금: {len(subsidies)}건 | 소상공인 사업자 자금: {len(business)}건")
 
 
 if __name__ == "__main__":
