@@ -6,33 +6,22 @@ var BASE='https://kjjin628.github.io/lifeinfo-data';
 var URLS={
   subsidies:BASE+'/subsidies.json',
   business:BASE+'/business.json',
-  festivals:BASE+'/festivals.json',
-  upcoming:BASE+'/upcoming.json',
   meta:BASE+'/meta.json',
   posted:BASE+'/posted_urls.json'
 };
 
 var REGIONS=['전체','서울','경기','부산','대구','인천','광주','대전','울산','세종','강원','충북','충남','전북','전남','경북','경남','제주'];
-var MONTHS=[];
-var now=new Date();
-for(var mi=0;mi<6;mi++){
-  var md=new Date(now.getFullYear(),now.getMonth()+mi,1);
-  MONTHS.push({label:(md.getMonth()+1)+'월',value:md.getMonth()+1});
-}
 
 var TAB_TITLES={
-  subsidies:'💰 지원금',
-  business:'🏢 사업자 지원',
-  festivals:'🎪 진행중 축제',
-  upcoming:'📅 다가오는 행사'
+  subsidies:'💰 맞춤형 정부 지원금',
+  business:'🏢 소상공인·사업자 자금 지원'
 };
 
 var state={
   tab:'subsidies',
   region:'전체',
-  month:MONTHS[0]?MONTHS[0].value:null,
-  data:{subsidies:[],business:[],festivals:[],upcoming:[]},
-  posted:{subsidies:{},business:{},festivals:{}}
+  data:{subsidies:[],business:[]},
+  posted:{subsidies:{},business:{}}
 };
 
 var $grid=document.getElementById('cardGrid');
@@ -81,20 +70,18 @@ function fetchJSON(url,cb){
 }
 
 var loaded=0;
-function checkReady(){loaded++;if(loaded>=6)render();}
+function checkReady(){loaded++;if(loaded>=4)render();}
 
 fetchJSON(URLS.subsidies,function(d){state.data.subsidies=d||[];buildRanking('rank-subsidies',state.data.subsidies,'name');checkReady();});
 fetchJSON(URLS.business,function(d){state.data.business=d||[];buildRanking('rank-business',state.data.business,'title');checkReady();});
-fetchJSON(URLS.festivals,function(d){state.data.festivals=d||[];buildRanking('rank-festivals',state.data.festivals,'title');checkReady();});
-fetchJSON(URLS.upcoming,function(d){state.data.upcoming=d||[];checkReady();});
 fetchJSON(URLS.meta,function(d){
   if(d){
     var el=document.getElementById('footerStats');
-    if(el) el.innerHTML='지원금 '+d.subsidies_count+'건 · 사업자 '+d.business_count+'건 · 축제 '+d.festivals_count+'건 · 업데이트 '+d.updated_at+' KST';
+    if(el) el.innerHTML='지원금 '+d.subsidies_count+'건 · 사업자 '+d.business_count+'건 · 업데이트 '+d.updated_at+' KST';
   }
   checkReady();
 });
-fetchJSON(URLS.posted,function(d){state.posted=d||{subsidies:{},business:{},festivals:{}};checkReady();});
+fetchJSON(URLS.posted,function(d){state.posted=d||{subsidies:{},business:{}};checkReady();});
 
 function buildRanking(elId,items,key){
   var el=document.getElementById(elId);
@@ -108,7 +95,7 @@ function buildRanking(elId,items,key){
   el.innerHTML=h;
 }
 
-/* 탭 클릭 이벤트 - forEach 대신 for 루프 사용 */
+/* 탭 클릭 이벤트 - 자금 정보 위주로 구성 */
 var navTabs=document.querySelectorAll('.nav-tab');
 for(var ti=0;ti<navTabs.length;ti++){
   (function(t){
@@ -117,7 +104,6 @@ for(var ti=0;ti<navTabs.length;ti++){
       t.classList.add('active');
       state.tab=t.getAttribute('data-tab');
       state.region='전체';
-      state.month=MONTHS[0]?MONTHS[0].value:null;
       render();
     });
   })(navTabs[ti]);
@@ -125,75 +111,42 @@ for(var ti=0;ti<navTabs.length;ti++){
 
 function buildSubTabs(){
   $tabs.innerHTML='';
-  if(state.tab==='upcoming'){
-    for(var mi=0;mi<MONTHS.length;mi++){
-      (function(m){
-        var b=document.createElement('button');
-        b.className='l-tab'+(m.value===state.month?' active':'');
-        b.textContent=m.label;
-        b.onclick=function(){state.month=m.value;render();};
-        $tabs.appendChild(b);
-      })(MONTHS[mi]);
-    }
-  }else{
-    for(var ri=0;ri<REGIONS.length;ri++){
-      (function(r){
-        var b=document.createElement('button');
-        b.className='l-tab'+(r===state.region?' active':'');
-        b.textContent=r;
-        b.onclick=function(){state.region=r;render();};
-        $tabs.appendChild(b);
-      })(REGIONS[ri]);
-    }
+  for(var ri=0;ri<REGIONS.length;ri++){
+    (function(r){
+      var b=document.createElement('button');
+      b.className='l-tab'+(r===state.region?' active':'');
+      b.textContent=r;
+      b.onclick=function(){state.region=r;render();};
+      $tabs.appendChild(b);
+    })(REGIONS[ri]);
   }
 }
 
 function getItems(){
   var items=state.data[state.tab]||[];
-  if(state.tab==='upcoming'){
-    if(state.month){
-      items=items.filter(function(x){
-        var s=x.start||'';
-        return s.length>=6&&parseInt(s.substring(4,6),10)===state.month;
-      });
-    }
-  }else{
-    if(state.region!=='전체'){
-      items=items.filter(function(x){
-        var r=x.region||'전국';
-        return r===state.region||r==='전국';
-      });
-    }
+  if(state.region!=='전체'){
+    items=items.filter(function(x){
+      var r=x.region||'전국';
+      return r===state.region||r==='전국';
+    });
   }
   return items;
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   [최종 수리 완료] 연동 게이트웨이 및 원본 링크 우회 라우터
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function getUrl(tab,item){
   var p=state.posted||{};
   var blog=null;
   
-  // 1순위: 자동 글쓰기 프로그램이 매핑해 준 내 블로그 주소가 있으면 무조건 거기로!
+  // 1순위: 자동 글쓰기 프로그램이 갱신해 준 내 블로그 실물 주소 체크
   if(tab==='subsidies' && p.subsidies) {
     blog = p.subsidies[item.id] || null;
   } else if(tab==='business' && p.business) {
     blog = p.business[item.title] || null;
-  } else if((tab==='festivals' || tab==='upcoming') && p.festivals) {
-    blog = p.festivals[item.title] || null;
   }
   
   if(blog) return blog;
   
-  // [수정 핵심] 축제/행사 탭은 원본 url 데이터가 있어도 무조건 무시하고 구글 검색으로 강제 토스!
-  if(tab==='festivals' || tab==='upcoming'){
-    return 'https://www.google.com/search?q='+encodeURIComponent((item.title||'')+' 대한민국 구석구석 축제');
-  }
-  
-  // 2순위: 지원금 및 사업자 탭의 원본 링크 처리
-  if(item.url && item.url.length>5) return item.url;
-  
+  // 2순위: 블로그 글이 아직 안 올라갔을 때 작동하는 원본 공공기관 가이드라인
   if(tab==='subsidies'){
     if(item.id){
       if(item.region && item.region!=='전국'){
@@ -205,7 +158,7 @@ function getUrl(tab,item){
   }
   
   if(tab==='business'){
-    return 'https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId='+encodeURIComponent(item.title||'');
+    return item.url || 'https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId='+encodeURIComponent(item.title||'');
   }
   
   return '#';
@@ -215,18 +168,16 @@ function hasBlog(tab,item){
   var p=state.posted||{};
   if(tab==='subsidies' && p.subsidies) return !!p.subsidies[item.id];
   if(tab==='business' && p.business) return !!p.business[item.title];
-  if((tab==='festivals' || tab==='upcoming') && p.festivals) return !!p.festivals[item.title];
   return false;
 }
 
 function render(){
   buildSubTabs();
   var items=getItems();
-  var regionLabel=state.tab==='upcoming'?(state.month+'월'):state.region;
-  $title.textContent=TAB_TITLES[state.tab]+' — '+regionLabel;
+  $title.textContent=TAB_TITLES[state.tab] + ' — ' + state.region;
   $count.textContent='총 '+items.length+'건';
   if(!items.length){
-    $grid.innerHTML='<div class="state-box">해당 조건의 데이터가 없습니다.</div>';
+    $grid.innerHTML='<div class="state-box">해당 조건의 혜택 데이터가 없습니다.</div>';
     return;
   }
   var h='';
@@ -235,13 +186,9 @@ function render(){
     var item=items[i];
     var url=getUrl(tab,item);
     var oc=url?(' onclick="window.open(\''+escA(url)+'\',\'_blank\')"'):'';
-    var bb=hasBlog(tab,item)?'<span class="badge badge-blog">📝 블로그</span>':'';
-    if(tab==='festivals'||tab==='upcoming'){
-      var img=item.image||item.thumb||'';
-      var ds='';
-      if(item.start){ds=item.start.replace(/(\d{4})(\d{2})(\d{2})/,'$1.$2.$3');if(item.end)ds+=' ~ '+item.end.replace(/(\d{4})(\d{2})(\d{2})/,'$1.$2.$3');}
-      h+='<div class="card festival-card"'+oc+'>'+(img?'<img class="festival-img" src="'+esc(img)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"/>':'')+'<div class="festival-body"><div class="card-badges"><span class="badge badge-region">'+esc(item.region||'')+'</span>'+bb+'</div><div class="card-title">'+esc(item.title||'')+'</div>'+(ds?'<div class="card-desc">'+esc(ds)+'</div>':'')+'<div class="card-meta"><span>'+esc(item.addr||'')+'</span></div></div></div>';
-    }else if(tab==='business'){
+    var bb=hasBlog(tab,item)?'<span class="badge badge-blog">📝 블로그 분석</span>':'';
+    
+    if(tab==='business'){
       h+='<div class="card"'+oc+'><div class="card-badges"><span class="badge badge-region">'+esc(item.region||'전국')+'</span>'+(item.field?'<span class="badge badge-field">'+esc(item.field)+'</span>':'')+bb+'</div><div class="card-title">'+esc(item.title||'')+'</div><div class="card-desc">'+esc((item.desc||'').replace(/<[^>]*>/g,''))+'</div><div class="card-meta"><span>'+esc(item.org||item.exec_org||'')+'</span>'+(item.apply_date?'<span>'+esc(item.apply_date)+'</span>':'')+'</div></div>';
     }else{
       h+='<div class="card"'+oc+'><div class="card-badges"><span class="badge badge-region">'+esc(item.region||'전국')+'</span>'+(item.category?'<span class="badge badge-category">'+esc(item.category)+'</span>':'')+bb+'</div><div class="card-title">'+esc(item.name||'')+'</div><div class="card-desc">'+esc(item.desc||'')+'</div><div class="card-meta"><span>'+esc(item.org||'')+'</span></div></div>';
@@ -255,7 +202,6 @@ function escA(s){if(!s)return '';return s.replace(/\\/g,'\\\\').replace(/'/g,"\\
 
 } /* end init */
 
-/* DOM 준비되면 실행, 아니면 대기 */
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',init);
 }else{
