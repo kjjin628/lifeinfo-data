@@ -175,19 +175,25 @@ function getUrl(tab,item){
   var p=state.posted||{};
   var blog=null;
   
-  // 1순위: 자동 글쓰기 프로그램이 갱신해 준 내 블로그 실물 주소 체크
+  // 1순위: 자동 글쓰기 프로그램이 매핑해 준 내 블로그 주소가 있으면 무조건 거기로!
   if(tab==='subsidies' && p.subsidies) {
     blog = p.subsidies[item.id] || null;
   } else if(tab==='business' && p.business) {
     blog = p.business[item.title] || null;
   } else if((tab==='festivals' || tab==='upcoming') && p.festivals) {
-    // 축제는 고유 ID 파편화 이슈 방어를 위해 '축제 명칭(title)' 자체를 키로 연동 매핑
     blog = p.festivals[item.title] || null;
   }
   
   if(blog) return blog;
   
-  // 2순위: 내 블로그 글이 아직 안 올라갔을 때 작동하는 원본 공공기관 가이드라인
+  // [수정 핵심] 축제/행사 탭은 원본 url 데이터가 있어도 무조건 무시하고 구글 검색으로 강제 토스!
+  if(tab==='festivals' || tab==='upcoming'){
+    return 'https://www.google.com/search?q='+encodeURIComponent((item.title||'')+' 대한민국 구석구석 축제');
+  }
+  
+  // 2순위: 지원금 및 사업자 탭의 원본 링크 처리
+  if(item.url && item.url.length>5) return item.url;
+  
   if(tab==='subsidies'){
     if(item.id){
       if(item.region && item.region!=='전국'){
@@ -199,12 +205,7 @@ function getUrl(tab,item){
   }
   
   if(tab==='business'){
-    return item.url || 'https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId='+encodeURIComponent(item.title||'');
-  }
-  
-  if(tab==='festivals' || tab==='upcoming'){
-    // 한국관광공사 UUID 변동 타격 해결: 사장님이 지정하신 구글 검색 우회로 완벽 복구
-    return 'https://www.google.com/search?q='+encodeURIComponent((item.title||'')+' 대한민국 구석구석 축제');
+    return 'https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId='+encodeURIComponent(item.title||'');
   }
   
   return '#';
