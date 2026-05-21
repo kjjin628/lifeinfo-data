@@ -1,6 +1,7 @@
 (function(){
 'use strict';
 
+function init(){
 var BASE='https://kjjin628.github.io/lifeinfo-data';
 var URLS={
   subsidies:BASE+'/subsidies.json',
@@ -39,24 +40,44 @@ var $title=document.getElementById('mainTitle');
 var $count=document.getElementById('mainCount');
 var $tabs=document.getElementById('localTabsHolder');
 
+/* ---- 핵심 체크: DOM 요소가 없으면 0.5초 후 재시도 ---- */
+if(!$grid||!$title||!$count||!$tabs){
+  setTimeout(init,500);
+  return;
+}
+
 var $toggle=document.getElementById('themeToggle');
-$toggle.onclick=function(){
-  var d=document.documentElement;
-  var dark=d.getAttribute('data-theme')==='dark';
-  d.setAttribute('data-theme',dark?'light':'dark');
-  $toggle.textContent=dark?'🌙':'☀️';
-  localStorage.setItem('bz-theme',dark?'light':'dark');
-};
-(function(){
-  var s=localStorage.getItem('bz-theme');
-  if(s==='dark'||(!s&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
-    document.documentElement.setAttribute('data-theme','dark');
-    $toggle.textContent='☀️';
-  }
-})();
+if($toggle){
+  $toggle.onclick=function(){
+    var d=document.documentElement;
+    var dark=d.getAttribute('data-theme')==='dark';
+    d.setAttribute('data-theme',dark?'light':'dark');
+    $toggle.textContent=dark?'🌙':'☀️';
+    try{localStorage.setItem('bz-theme',dark?'light':'dark');}catch(e){}
+  };
+  (function(){
+    try{
+      var s=localStorage.getItem('bz-theme');
+      if(s==='dark'||(!s&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+        document.documentElement.setAttribute('data-theme','dark');
+        $toggle.textContent='☀️';
+      }
+    }catch(e){}
+  })();
+}
 
 function fetchJSON(url,cb){
-  fetch(url).then(function(r){return r.ok?r.json():null;}).then(function(d){cb(d);}).catch(function(){cb(null);});
+  var x=new XMLHttpRequest();
+  x.open('GET',url,true);
+  x.onreadystatechange=function(){
+    if(x.readyState===4){
+      if(x.status===200){
+        try{cb(JSON.parse(x.responseText));}catch(e){cb(null);}
+      }else{cb(null);}
+    }
+  };
+  x.onerror=function(){cb(null);};
+  try{x.send();}catch(e){cb(null);}
 }
 
 var loaded=0;
@@ -87,35 +108,43 @@ function buildRanking(elId,items,key){
   el.innerHTML=h;
 }
 
-document.querySelectorAll('.nav-tab').forEach(function(t){
-  t.addEventListener('click',function(){
-    document.querySelectorAll('.nav-tab').forEach(function(x){x.classList.remove('active');});
-    t.classList.add('active');
-    state.tab=t.getAttribute('data-tab');
-    state.region='전체';
-    state.month=MONTHS[0]?MONTHS[0].value:null;
-    render();
-  });
-});
+/* 탭 클릭 이벤트 - forEach 대신 for 루프 사용 */
+var navTabs=document.querySelectorAll('.nav-tab');
+for(var ti=0;ti<navTabs.length;ti++){
+  (function(t){
+    t.addEventListener('click',function(){
+      for(var j=0;j<navTabs.length;j++) navTabs[j].classList.remove('active');
+      t.classList.add('active');
+      state.tab=t.getAttribute('data-tab');
+      state.region='전체';
+      state.month=MONTHS[0]?MONTHS[0].value:null;
+      render();
+    });
+  })(navTabs[ti]);
+}
 
 function buildSubTabs(){
   $tabs.innerHTML='';
   if(state.tab==='upcoming'){
-    MONTHS.forEach(function(m){
-      var b=document.createElement('button');
-      b.className='l-tab'+(m.value===state.month?' active':'');
-      b.textContent=m.label;
-      b.onclick=function(){state.month=m.value;render();};
-      $tabs.appendChild(b);
-    });
+    for(var mi=0;mi<MONTHS.length;mi++){
+      (function(m){
+        var b=document.createElement('button');
+        b.className='l-tab'+(m.value===state.month?' active':'');
+        b.textContent=m.label;
+        b.onclick=function(){state.month=m.value;render();};
+        $tabs.appendChild(b);
+      })(MONTHS[mi]);
+    }
   }else{
-    REGIONS.forEach(function(r){
-      var b=document.createElement('button');
-      b.className='l-tab'+(r===state.region?' active':'');
-      b.textContent=r;
-      b.onclick=function(){state.region=r;render();};
-      $tabs.appendChild(b);
-    });
+    for(var ri=0;ri<REGIONS.length;ri++){
+      (function(r){
+        var b=document.createElement('button');
+        b.className='l-tab'+(r===state.region?' active':'');
+        b.textContent=r;
+        b.onclick=function(){state.region=r;render();};
+        $tabs.appendChild(b);
+      })(REGIONS[ri]);
+    }
   }
 }
 
@@ -189,7 +218,7 @@ function render(){
       if(item.start){ds=item.start.replace(/(\d{4})(\d{2})(\d{2})/,'$1.$2.$3');if(item.end)ds+=' ~ '+item.end.replace(/(\d{4})(\d{2})(\d{2})/,'$1.$2.$3');}
       h+='<div class="card festival-card"'+oc+'>'+(img?'<img class="festival-img" src="'+esc(img)+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"/>':'')+'<div class="festival-body"><div class="card-badges"><span class="badge badge-region">'+esc(item.region||'')+'</span>'+bb+'</div><div class="card-title">'+esc(item.title||'')+'</div>'+(ds?'<div class="card-desc">'+esc(ds)+'</div>':'')+'<div class="card-meta"><span>'+esc(item.addr||'')+'</span></div></div></div>';
     }else if(tab==='business'){
-      h+='<div class="card"'+oc+'><div class="card-badges"><span class="badge badge-region">'+esc(item.region||'전국')+'</span>'+(item.field?'<span class="badge badge-field">'+esc(item.field)+'</span>':'')+bb+'</div><div class="card-title">'+esc(item.title||'')+'</div><div class="card-desc">'+esc(item.desc||'')+'</div><div class="card-meta"><span>'+esc(item.org||item.exec_org||'')+'</span>'+(item.apply_date?'<span>'+esc(item.apply_date)+'</span>':'')+'</div></div>';
+      h+='<div class="card"'+oc+'><div class="card-badges"><span class="badge badge-region">'+esc(item.region||'전국')+'</span>'+(item.field?'<span class="badge badge-field">'+esc(item.field)+'</span>':'')+bb+'</div><div class="card-title">'+esc(item.title||'')+'</div><div class="card-desc">'+esc((item.desc||'').replace(/<[^>]*>/g,''))+'</div><div class="card-meta"><span>'+esc(item.org||item.exec_org||'')+'</span>'+(item.apply_date?'<span>'+esc(item.apply_date)+'</span>':'')+'</div></div>';
     }else{
       h+='<div class="card"'+oc+'><div class="card-badges"><span class="badge badge-region">'+esc(item.region||'전국')+'</span>'+(item.category?'<span class="badge badge-category">'+esc(item.category)+'</span>':'')+bb+'</div><div class="card-title">'+esc(item.name||'')+'</div><div class="card-desc">'+esc(item.desc||'')+'</div><div class="card-meta"><span>'+esc(item.org||'')+'</span></div></div>';
     }
@@ -199,5 +228,14 @@ function render(){
 
 function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function escA(s){if(!s)return '';return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+
+} /* end init */
+
+/* DOM 준비되면 실행, 아니면 대기 */
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',init);
+}else{
+  init();
+}
 
 })();
