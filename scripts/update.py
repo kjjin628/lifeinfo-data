@@ -298,6 +298,10 @@ def get_festivals(event_start_date, num_of_rows=50):
     result = []
     for item in items:
         addr = item.get("addr1", "")
+        cid = item.get("contentid", "")
+        # ★ 한국관광공사 상세페이지 URL 자동 생성
+        detail_url = f"https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid={cid}" if cid else ""
+
         result.append({
             "title": item.get("title", ""),
             "addr": addr,
@@ -306,14 +310,14 @@ def get_festivals(event_start_date, num_of_rows=50):
             "start": item.get("eventstartdate", ""),
             "end": item.get("eventenddate", ""),
             "tel": item.get("tel", ""),
-            "contentid": item.get("contentid", ""),
+            "contentid": cid,
             "areacode": item.get("areacode", ""),
             "mapx": item.get("mapx", ""),
             "mapy": item.get("mapy", ""),
             "region": extract_region(addr),
+            "url": detail_url,  # ★ 추가
         })
     return result
-
 
 def collect_festivals():
     print("\n[2] 축제/행사 수집 중...")
