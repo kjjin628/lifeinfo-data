@@ -177,9 +177,15 @@ function getUrl(tab,item){
   if(blog)return blog;
   if(item.url&&item.url.length>5)return item.url;
   if(tab==='subsidies'){
-    if(item.id)return 'https://www.gov.kr/portal/rcvfvrSvc/dtlEx/'+item.id+'?svcId='+item.id;
-    return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
+  if(item.id){
+    // 지역 지원금은 정부24에서 ID 조회가 안 되므로 검색으로 보냄
+    if(item.region && item.region!=='전국'){
+      return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
+    }
+    return 'https://www.gov.kr/portal/rcvfvrSvc/dtlEx/'+item.id;
   }
+  return 'https://www.gov.kr/search?srhQuery='+encodeURIComponent(item.name||'');
+}
   if(tab==='business'){
     return 'https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId='+encodeURIComponent(item.title||'');
   }
